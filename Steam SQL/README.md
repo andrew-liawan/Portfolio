@@ -1,4 +1,4 @@
-# Markov Chains - Hypothesis Testing
+# SQL - Steam Games
 
 Cleaned, wrangled, and consolidated data tables from Kaggle. Consolidation and cleaning of 3 imported tables (csv) in server:
 
