@@ -1,0 +1,485 @@
+---
+title: "Project Report"
+author: "Andrew Liawan, Ethan Nathanael, Kyle Nelwan"
+date: "11/04/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(MPV)
+library(MASS)
+library(bestglm)
+library(glmnet)
+library(regclass)
+```
+
+## DATASET SETUPS
+
+```{r initialize}
+df <- read.csv("hour.csv")
+df<- subset(df, select = -c(instant,cnt,dteday))
+```
+
+## INITIAL ASSESSMENT (Casual)
+
+```{r}
+model.cas <- lm(casual ~. - registered, data = df)
+summary(model.cas)
+plot(model.cas)
+```
+
+First, we regress the number of casual users with all the available variables. At first glance, we could see that most of variables are highly significant. However, notice that our adjusted R-squared is less than 0.5. Therefore, even though our model is significant, it can only explain less than half of the data.
+
+The residuals vs fitted diagnostic plot has a clear pattern. Our data set seems to have a quadratic relationship.
+The Normal Q-Q plot shows that our model is highly right skewed. This is a huge problem for us. Notice that those rightly skewed data have a very large value of standardized residuals. Hence, the this original linear model is flawed.
+The residuals vs leverage plot tells us that none of our data are influential points but have high residuals as stated before.
+
+## INITIAL ASSESSMENT (Registered)
+
+```{r}
+model.reg <- lm(registered ~. - casual, data = df)
+summary(model.reg)
+plot(model.reg)
+```
+
+The summary of this model shows us that most of our variables are significant enough (5% significance level). However, this  model has a low adjusted R-squared value at 0.335. Hence, this model is great at explaining the data we have.
+
+On further inspection, our data may have a quadratic or a decaying relationship. This is shown in the residuals vs fitted plot.  
+The Normal Q-Q plot shows that our data set have a light left tail and a heavy right tail. Hence, we can conclude that our data set is rightly skewed. Note that a lot of our data are beyond the 2 standardized residuals range. Therefore, we have a problem with our current linear model. 
+
+Similar with the previous model, this model does not have any influence points but have high residuals value.
+
+## MULTICOLLINEARITY ASSESSMENT (Casual)
+
+```{r}
+VIF(model.cas)
+modelwotemp <- lm(casual ~.-temp - registered, data = df)
+VIF(modelwotemp)
+modelwoatemp <- lm(casual ~.-atemp - registered, data = df)
+VIF(modelwoatemp)
+modelwoseason <- lm(casual ~.-season - registered, data = df)
+VIF(modelwoseason)
+modelwomnth <- lm(casual ~.-mnth - registered, data = df)
+VIF(modelwomnth)
+```
+
+We can see that there exist a high VIF value between temp and atemp. This make sense since both variable indicates the value of the hourly temperature. Therefore, we need to remove one of those variables.
+Also, there seems to be a relatively high VIF value between season and month. This make sense since certain months always have the same season. Hence, we remove season from the model as the mnth variable give us more insight into the data as there is more available inputs.
+
+As shown above, the VIF values got better (closer to 1), when one of the correlated variable is removed (ex. VIF of atemp got better when temp is removed, etc.)
+
+Also should be noted that the VIF values for casual and registered models are the same, since both models use the same set of explanatory variables.
+
+## BOX-COX TRANSFORMATION
+
+### Linear, Casual, atemp
+
+```{r}
+x.la <- subset(df, select = - c(season,temp))
+x.la$casual <- x.la$casual+1
+x.la$registered <- x.la$registered+1
+
+bc.lca<-boxcox(casual ~. - registered,data = x.la)
+lambda.lca <- bc.lca$x[which.max(bc.lca$y)]
+model.lca <- lm(((casual^lambda.lca-1)/lambda.lca) ~ . - registered, data = x.la)
+
+summary(model.lca)
+plot(model.lca)
+```
+
+### Linear, Casual, temp
+
+```{r}
+x.lt <- subset(df, select = - c(season,atemp))
+x.lt$casual <- x.lt$casual+1
+x.lt$registered <- x.lt$registered+1
+
+bc.lct<-boxcox(casual ~. - registered,data = x.lt )
+lambda.lct <- bc.lct$x[which.max(bc.lct$y)]
+model.lct <- lm(((casual^lambda.lct-1)/lambda.lct) ~ . - registered, data = x.lt)
+
+summary(model.lct)
+plot(model.lct)
+```
+
+### Quadratic, Casual, atemp
+
+```{r}
+x.qa <- subset(df, select = - c(season,temp))
+x.qa$casual <- x.qa$casual+1
+x.qa$registered <- x.qa$registered+1
+x.qa$mnth2 <- x.qa$mnth^2
+x.qa$hr2 <- x.qa$hr^2
+x.qa$weekday2 <- x.qa$weekday^2
+x.qa$weathersit2 <- x.qa$weathersit^2
+x.qa$atemp2 <- x.qa$atemp^2
+x.qa$hum2 <- x.qa$hum^2
+x.qa$windspeed2 <- x.qa$windspeed^2
+
+bc.qca<-boxcox(casual ~. - registered,data = x.qa )
+lambda.qca <- bc.qca$x[which.max(bc.qca$y)]
+model.qca <- lm(((casual^lambda.qca-1)/lambda.qca) ~ . - registered, data = x.qa)
+
+summary(model.qca)
+plot(model.qca)
+```
+
+### Quadratic, Casual, temp
+
+```{r}
+x.qt <- subset(df, select = - c(season,atemp))
+x.qt$casual <- x.qt$casual+1
+x.qt$registered <- x.qt$registered+1
+x.qt$mnth2 <- x.qt$mnth^2
+x.qt$hr2 <- x.qt$hr^2
+x.qt$weekday2 <- x.qt$weekday^2
+x.qt$weathersit2 <- x.qt$weathersit^2
+x.qt$temp2 <- x.qt$temp^2
+x.qt$hum2 <- x.qt$hum^2
+x.qt$windspeed2 <- x.qt$windspeed^2
+
+bc.qct<-boxcox(casual ~. - registered,data = x.qt )
+lambda.qct <- bc.qct$x[which.max(bc.qct$y)]
+model.qct <- lm(((casual^lambda.qct-1)/lambda.qct) ~ . - registered, data = x.qt)
+
+summary(model.qct)
+plot(model.qct)
+```
+
+### Linear, Registered, atemp
+
+```{r}
+bc.lra<-boxcox(registered ~. - casual,data = x.la )
+lambda.lra <- bc.lra$x[which.max(bc.lra$y)]
+model.lra <- lm(((registered^lambda.lra-1)/lambda.lra) ~ . - casual, data = x.la)
+
+summary(model.lra)
+plot(model.lra)
+```
+
+### Linear, Registered, temp
+
+```{r}
+bc.lrt<-boxcox(registered ~. - casual,data = x.lt )
+lambda.lrt <- bc.lrt$x[which.max(bc.lrt$y)]
+model.lrt <- lm(((registered^lambda.lrt-1)/lambda.lrt) ~ . - casual, data = x.lt)
+
+summary(model.lrt)
+plot(model.lrt)
+```
+
+### Quadratic, Registered, atemp
+
+```{r}
+bc.qra<-boxcox(registered ~. - casual,data = x.qa )
+lambda.qra <- bc.qra$x[which.max(bc.qra$y)]
+model.qra <- lm(((registered^lambda.qra-1)/lambda.qra) ~ . - casual, data = x.qa)
+
+summary(model.qra)
+plot(model.qra)
+```
+
+### Quadratic, Registered, temp
+
+```{r}
+bc.qrt<-boxcox(registered ~. - casual,data = x.qt )
+lambda.qrt <- bc.qrt$x[which.max(bc.qrt$y)]
+model.qrt <- lm(((registered^lambda.qrt-1)/lambda.qrt) ~ . - casual, data = x.qt)
+
+summary(model.qrt)
+plot(model.qrt)
+```
+
+## VARIABLE SELECTION
+
+### Linear, Casual, atemp
+
+```{r}
+x.la <- subset(df, select = - c(season,temp))
+x.la$casual <- x.la$casual+1
+x.la$registered <- x.la$registered+1
+x.la$casual <-(x.la$casual^lambda.lca-1)/lambda.lca
+y.la <- x.la$casual
+X.la <- subset(x.la, select = - c(casual,registered))
+X.la <- as.matrix(X.la)
+
+## LASSO
+cross.validation.lca <- cv.glmnet(X.la, y.la, alpha = 1,type.measure = "mse") 
+optimal.lambda.lca <- cross.validation.lca$lambda.min
+lm.lasso.optimal.lca <-glmnet(X.la, y.la, 
+                   lambda = optimal.lambda.lca,
+                   alpha = 1, #alpha=1 is the LASSO penalty
+                   family = 'gaussian')
+
+coef(lm.lasso.optimal.lca)
+
+## Backwards Selection
+X.la<- subset(X.la,select = - weathersit)
+
+summary(lm(y.la~X.la))
+plot(lm(y.la~X.la))
+
+## PRESS
+PRESS(lm(y.la~X.la))
+```
+
+LASSO: All variables are significant
+
+Backwards Selection: All except 'weathersit'
+
+### Linear, Casual, temp
+
+```{r}
+x.lt <- subset(df, select = - c(season,atemp))
+x.lt$casual <- x.lt$casual+1
+x.lt$registered <- x.lt$registered+1
+x.lt$casual <-(x.lt$casual^lambda.lct-1)/lambda.lct
+y.lt <- x.lt$casual
+X.lt <- subset(x.lt, select = - c(casual,registered))
+X.lt <- as.matrix(X.lt)
+
+## LASSO
+cross.validation.lct <- cv.glmnet(X.lt, y.lt, alpha = 1,type.measure = "mse") 
+optimal.lambda.lct <- cross.validation.lct$lambda.min
+lm.lasso.optimal.lct <-glmnet(X.lt, y.lt, 
+                   lambda = optimal.lambda.lct,
+                   alpha = 1, #alpha=1 is the LASSO penalty
+                   family = 'gaussian')
+coef(lm.lasso.optimal.lct)
+
+## Backwards Selection
+X.lt<- subset(X.lt,select = - c(weathersit,windspeed))
+summary(lm(y.lt~X.lt))
+plot(lm(y.lt~X.lt))
+
+## PRESS
+PRESS(lm(y.lt~X.lt))
+```
+LASSO: All variables are significant
+
+Backwards Selection: All except 'weathersit' and 'windspeed'
+
+### Quadratic, Casual, atemp
+
+```{r}
+x.qa$casual <-(x.qa$casual^lambda.qca-1)/lambda.qca
+y.qa <- x.qa$casual
+X.qa <- subset(x.qa, select = - c(casual,registered))
+X.qa <- as.matrix(X.qa)
+
+## LASSO
+cross.validation.qca <- cv.glmnet(X.qa, y.qa, alpha = 1,type.measure = "mse") 
+
+optimal.lambda.qca <- cross.validation.qca$lambda.min
+
+
+lm.lasso.optimal.qca <-glmnet(X.qa, y.qa, 
+                   lambda = optimal.lambda.qca,
+                   alpha = 1, #alpha=1 is the LASSO penalty
+                   family = 'gaussian')
+
+coef(lm.lasso.optimal.qca)
+
+summary(lm(y.qa~X.qa))
+plot(lm(y.qa~X.qa))
+
+## No Backwards Selection: All variables are significant to begin with
+```
+
+LASSO: All variables are significant
+
+Backwards Selection: All variables are significant
+
+### Quadratic, Casual, temp
+
+```{r}
+x.qt$casual <-(x.qt$casual^lambda.qct-1)/lambda.qct
+y.qt <- x.qt$casual
+X.qt <- subset(x.qt, select = - c(casual,registered))
+X.qt <- as.matrix(X.qt)
+
+## LASSO
+cross.validation.qct <- cv.glmnet(X.qt, y.qt, alpha = 1,type.measure = "mse") 
+
+optimal.lambda.qct <- cross.validation.qct$lambda.min
+
+
+lm.lasso.optimal.qct <-glmnet(X.qt, y.qt, 
+                   lambda = optimal.lambda.qct,
+                   alpha = 1, #alpha=1 is the LASSO penalty
+                   family = 'gaussian')
+
+coef(lm.lasso.optimal.qct)
+
+summary(lm(y.qt~X.qt))
+plot(lm(y.qt~X.qt))
+
+## No Backwards Selection: All variables are significant to begin with
+```
+
+LASSO: All variables are significant
+
+Backwards Selection: All variables are significant
+
+### Linear, Registered, atemp
+
+```{r}
+x.la <- subset(df, select = - c(season,temp))
+x.la$casual <- x.la$casual+1
+x.la$registered <- x.la$registered+1
+x.la$registered <-(x.la$registered^lambda.lra-1)/lambda.lra
+y.la <- x.la$registered
+X.la <- subset(x.la, select = - c(casual,registered))
+X.la <- as.matrix(X.la)
+
+## LASSO
+cross.validation.lra <- cv.glmnet(X.la, y.la, alpha = 1,type.measure = "mse") 
+
+optimal.lambda.lra <- cross.validation.lra$lambda.min
+
+
+lm.lasso.optimal.lra <-glmnet(X.la, y.la, 
+                   lambda = optimal.lambda.lra,
+                   alpha = 1, #alpha=1 is the LASSO penalty
+                   family = 'gaussian')
+
+coef(lm.lasso.optimal.lra)
+
+## Backwards Selection
+X.la<- subset(X.la,select = - weathersit)
+summary(lm(y.la~X.la))
+plot(lm(y.la~X.la))
+
+## PRESS
+PRESS(lm(y.la~X.la))
+```
+
+LASSO: All variables are significant
+
+Backwards Selection: All except 'weathersit'
+
+### Linear, Registered, temp
+
+```{r}
+x.lt <- subset(df, select = - c(season,atemp))
+x.lt$casual <- x.lt$casual+1
+x.lt$registered <- x.lt$registered+1
+x.lt$registered <-(x.lt$registered^lambda.lrt-1)/lambda.lrt
+y.lt <- x.lt$registered
+X.lt <- subset(x.lt, select = - c(casual,registered))
+X.lt <- as.matrix(X.lt)
+
+## LASSO
+cross.validation.lrt <- cv.glmnet(X.lt, y.lt, alpha = 1,type.measure = "mse") 
+
+optimal.lambda.lrt <- cross.validation.lrt$lambda.min
+
+
+lm.lasso.optimal.lrt <-glmnet(X.lt, y.lt, 
+                   lambda = optimal.lambda.lrt,
+                   alpha = 1, #alpha=1 is the LASSO penalty
+                   family = 'gaussian')
+
+coef(lm.lasso.optimal.lrt)
+
+## Backwards Selection
+X.lt<- subset(X.lt,select = - c(weathersit,windspeed))
+summary(lm(y.lt~X.lt))
+plot(lm(y.lt~X.lt))
+
+## PRESS
+PRESS(lm(y.lt~X.lt))
+```
+
+LASSO: All variables are significant
+
+Backwards Selection: All except 'weathersit' and 'windspeed'
+
+### Quadratic, Registered, atemp
+
+```{r}
+x.qa <- subset(df, select = - c(season,temp))
+x.qa$casual <- x.qa$casual+1
+x.qa$registered <- x.qa$registered+1
+x.qa$mnth2 <- x.qa$mnth^2
+x.qa$hr2 <- x.qa$hr^2
+x.qa$weekday2 <- x.qa$weekday^2
+x.qa$weathersit2 <- x.qa$weathersit^2
+x.qa$atemp2 <- x.qa$atemp^2
+x.qa$hum2 <- x.qa$hum^2
+x.qa$windspeed2 <- x.qa$windspeed^2
+x.qa$registered <-(x.qa$registered^lambda.qra-1)/lambda.qra
+y.qa <- x.qa$registered
+X.qa <- subset(x.qa, select = - c(casual,registered))
+X.qa <- as.matrix(X.qa)
+
+## LASSO
+cross.validation.qra <- cv.glmnet(X.qa, y.qa, alpha = 1,type.measure = "mse") 
+
+optimal.lambda.qra <- cross.validation.qra$lambda.min
+
+
+lm.lasso.optimal.qra <-glmnet(X.qa, y.qa, 
+                   lambda = optimal.lambda.qra,
+                   alpha = 1, #alpha=1 is the LASSO penalty
+                   family = 'gaussian')
+
+coef(lm.lasso.optimal.qra)
+
+## Backwards Selection
+X.qa<- subset(X.qa,select = - c(weekday))
+summary(lm(y.qa~X.qa))
+plot(lm(y.qa~X.qa))
+
+## PRESS
+PRESS(lm(y.qa~X.qa))
+```
+
+LASSO: All variables are significant
+
+Backwards Selection: All except 'weekday'
+
+### Quadratic, Registered, temp
+
+```{r}
+x.qt <- subset(df, select = - c(season,atemp))
+x.qt$casual <- x.qt$casual+1
+x.qt$registered <- x.qt$registered+1
+x.qt$mnth2 <- x.qt$mnth^2
+x.qt$hr2 <- x.qt$hr^2
+x.qt$weekday2 <- x.qt$weekday^2
+x.qt$weathersit2 <- x.qt$weathersit^2
+x.qt$temp2 <- x.qt$temp^2
+x.qt$hum2 <- x.qt$hum^2
+x.qt$windspeed2 <- x.qt$windspeed^2
+x.qt$registered <-(x.qt$registered^lambda.qrt-1)/lambda.qrt
+y.qt <- x.qt$registered
+X.qt <- subset(x.qt, select = - c(casual,registered))
+X.qt <- as.matrix(X.qt)
+
+## LASSO
+cross.validation.qrt <- cv.glmnet(X.qt, y.qt, alpha = 1,type.measure = "mse") 
+
+optimal.lambda.qrt <- cross.validation.qrt$lambda.min
+
+
+lm.lasso.optimal.qrt <-glmnet(X.qt, y.qt, 
+                   lambda = optimal.lambda.qrt,
+                   alpha = 1, #alpha=1 is the LASSO penalty
+                   family = 'gaussian')
+
+coef(lm.lasso.optimal.qrt)
+
+## Backwards Selection
+X.qt<- subset(X.qt,select = - c(weekday,mnth2))
+summary(lm(y.qt~X.qt))
+plot(lm(y.qt~X.qt))
+
+## PRESS
+PRESS(lm(y.qt~X.qt))
+```
+
+LASSO: All variables are significant
+
+Backwards Selection: All except 'weekday' and 'mnth2'
