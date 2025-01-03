@@ -85,8 +85,52 @@
 										<li>Python</li>
 										<li>Tableau</li>
 									</ul>
-									<br><br>
+									<br>
+									Links to Python & Tableau files:
+									<ul class="alt">
+										<li><a href="https://github.com/andrew-liawan/Portfolio/blob/main/90s%20Artists/analysis1.ipynb">Exploratory Data Analysis - Jupyter Notebook</a> </li>
+										<li><a href="https://github.com/andrew-liawan/Portfolio/blob/main/90s%20Artists/project_functions1.py">Functions for EDA - Python Code</a></li>
+										<li><a href="https://github.com/andrew-liawan/Portfolio/blob/main/90s%20Artists/tableau_1.twb">View Tableau twb File</a></li>
+										<li><a href="https://andrew-liawan.github.io/Portfolio/90s%20Artists/tableau_1.twb">Download Tableau twb File</a></li>
+									</ul>
+									<br>
 									<div class='tableauPlaceholder' id='viz1735687609563' style='position: relative'><noscript><a href='#'><img alt='Recognizability of 90&#39;s Artists in 2020 by Millenials and Gen-Zs - Andrew Liawan ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Re&#47;Recognitionof90sartists&#47;Recognizabilityof90sArtistsin2020byMillenialsandGen-Zs-AndrewLiawan&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='Recognitionof90sartists&#47;Recognizabilityof90sArtistsin2020byMillenialsandGen-Zs-AndrewLiawan' /><param name='tabs' value='no' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;Re&#47;Recognitionof90sartists&#47;Recognizabilityof90sArtistsin2020byMillenialsandGen-Zs-AndrewLiawan&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='en-US' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1735687609563');                    var vizElement = divElement.getElementsByTagName('object')[0];                    if ( divElement.offsetWidth > 800 ) { vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';} else if ( divElement.offsetWidth > 500 ) { vizElement.style.width='100%';vizElement.style.height=(divElement.offsetWidth*0.75)+'px';} else { vizElement.style.width='100%';vizElement.style.height='1527px';}                     var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+								</p>
+								<hr />
+								<header>
+									<span class="image right"><img src="images/pic10.jpg" alt="" /></span>
+									<h3>R-Code - Bike-Sharing Rental Dataset</h3>
+									<p>January 2022 - April 2022</p>
+								</header>
+								<p>
+									Examined which variables and how much each variable in the data affect 
+									the hourly number of bike-sharing rental users. After examination,
+									created a model which fits the data best.
+									Done diagnostics on fitted values (residials vs fitted, qq plots)
+									<br><br>
+									Skills highlighted:
+									<ul class="alt">
+										<li>R-Code, R-Markdown</li>
+										<li>Data modelling, data analysis, model anaysis and diagnostics</li>
+									</ul>
+									<br><br>
+									<iframe class="pdf" 
+                					src=
+									"https://andrew-liawan.github.io/Portfolio/R%20Bike-Sharing%20Rental%20Data/DATA%20410%20Proposal.pdf"
+           							 width="100%" height="100%">
+        							</iframe>
+									<br><br>
+									<iframe class="pdf" 
+                					src=
+									"https://andrew-liawan.github.io/Portfolio/R%20Bike-Sharing%20Rental%20Data/DATA%20410%20Project%20Report%20PDF.pdf"
+           							 width="100%" height="100%">
+        							</iframe>
+									<br><br>
+									Links to Codes:
+									<ul class="alt">
+										<li><a href="https://andrew-liawan.github.io/Portfolio/R%20Bike-Sharing%20Rental%20Data/DATA-410-Project-Rmd.html">  HTML File</a> </li>
+										<li><a href="https://andrew-liawan.github.io/Portfolio/R%20Bike-Sharing%20Rental%20Data/DATA%20410%20Project%20Rmd.Rmd">  R Markdown File</a> </li>
+									</ul>
 								</p>
 								<hr />
 								<header>
@@ -108,7 +152,7 @@
 									<iframe class="pdf" 
                 					src=
 									"https://andrew-liawan.github.io/Portfolio/Markov%20Chain/STAT%20403%20Project%20-%20Andrew%20Liawan.pdf"
-           							 width="800" height="500">
+           							 width="100%" height="100%">
         							</iframe>
 									<br><br>
 									Links to Codes:
@@ -135,311 +179,18 @@
 										<li>Microsoft SQL Server Management Studio</li>
 										<li>Transact-SQL</li>
 									</ul>
-									<br><br>
-									Data Consolidation query: 
-									<a href="https://github.com/andrew-liawan/Portfolio/blob/main/Steam%20SQL/Consolidation%20SQL.sql">View SQL file</a> 
-									<a href="https://andrew-liawan.github.io/Portfolio/Steam%20SQL/Consolidation%20SQL.sql">Download SQL file</a>
-									<br><br>
-									<pre><code>
--- Cleaning Data Tables (Removing unneccessary/overlapping columns)
-
-SELECT AppID,Name,Release_date,Developers,Publishers,Categories,Genres,DLC_count,Windows,Mac,Linux,Metacritic_score,Metacritic_url,About_the_game,Header_image,Website,Support_url,Support_email,Notes,Achievements,Recommendations
-INTO steam_games_clean
-FROM portfolio.dbo.steam_games
-
-SELECT steam_appid, required_age, controller_support, type
-INTO steam_app_clean
-FROM portfolio.dbo.steam_app
-
-SELECT appid,owners,price,initialprice,discount,languages,ccu,positive,negative,tags
-INTO steam_spy_clean
-FROM portfolio.dbo.steam_spy
-
--- Renaming 'appid' columns to avoid merging errors due to same column names
-
-EXEC sp_rename 'steam_spy_clean.appid','app_id','COLUMN';
-
--- Joining the 3 tables into one consolidated table (Joining based on the unique App IDs)
-
-SELECT *
-INTO steam_data
-FROM steam_games_clean
-LEFT JOIN steam_app_clean
-ON steam_games_clean.AppID = steam_app_clean.steam_appid
-LEFT JOIN steam_spy_clean
-ON steam_games_clean.AppID = steam_spy_clean.app_id
-
--- Dropping extra App ID columns from the joining
-
-ALTER TABLE steam_data
-DROP COLUMN steam_appid,app_id
-
--- Final consolidated data table to be used
-
-SELECT * FROM steam_data
-									</code></pre>
-									<br><br>
-									Data Exploration query: 
-									<a href="https://github.com/andrew-liawan/Portfolio/blob/main/Steam%20SQL/Data%20Exploration.sql">View SQL file</a> 
-									<a href="https://andrew-liawan.github.io/Portfolio/Steam%20SQL/Data%20Exploration.sql">Download SQL file</a>
-									<br><br>
-									<pre><code>
-SELECT *
-FROM steam_data
-ORDER BY AppID
-
--- Total Game Count in Database = 93,185
-
-SELECT COUNT (AppID)
-FROM steam_data
-
--- Total Developer Count in Database = 54,229
-
-SELECT COUNT (DISTINCT Developers)
-FROM steam_data
-WHERE Developers IS NOT NULL
-
--- Game Count by Developers
-
-SELECT Developers, COUNT (AppID)
-FROM steam_data
-WHERE Developers IS NOT NULL
-GROUP BY Developers
-ORDER BY COUNT(AppID) DESC
-
--- Game Count by Genres
-
-WITH tmp(AppID, Name, Genre_idv, Genres) AS
-(
-    SELECT
-        AppID,
-        Name,
-        LEFT(Genres, CHARINDEX(',', Genres + ',') - 1),
-        STUFF(Genres, 1, CHARINDEX(',', Genres + ','), '')
-    FROM steam_data
-	WHERE Genres IS NOT NULL
-    UNION all
-
-    SELECT
-        AppID,
-        Name,
-        LEFT(Genres, CHARINDEX(',', Genres + ',') - 1),
-        STUFF(Genres, 1, CHARINDEX(',', Genres + ','), '')
-    FROM tmp
-    WHERE
-        Genres > ''
-)
-
-SELECT Genre_idv, COUNT(AppID)
-FROM tmp
-GROUP BY Genre_idv
-ORDER BY COUNT(AppID) DESC
-
--- Game Count by Categories
-
-WITH tmp(AppID, Name, Categories_idv, Categories) AS
-(
-    SELECT
-        AppID,
-        Name,
-        LEFT(Categories, CHARINDEX(',', Categories + ',') - 1),
-        STUFF(Categories, 1, CHARINDEX(',', Categories + ','), '')
-    FROM steam_data
-	WHERE Categories IS NOT NULL
-    UNION all
-
-    SELECT
-        AppID,
-        Name,
-        LEFT(Categories, CHARINDEX(',', Categories + ',') - 1),
-        STUFF(Categories, 1, CHARINDEX(',', Categories + ','), '')
-    FROM tmp
-    WHERE
-        Categories > ''
-)
-
-SELECT Categories_idv, COUNT(AppID)
-FROM tmp
-GROUP BY Categories_idv
-ORDER BY COUNT(AppID) DESC
-
--- Game Count by Available Language
-
-WITH tmp(AppID, Name, languages_idv, languages) AS
-(
-    SELECT
-        AppID,
-        Name,
-        LEFT(languages, CHARINDEX(',', languages + ',') - 1),
-        STUFF(languages, 1, CHARINDEX(',', languages + ','), '')
-    FROM steam_data
-	WHERE languages IS NOT NULL
-    UNION all
-
-    SELECT
-        AppID,
-        Name,
-        LEFT(languages, CHARINDEX(',', languages + ',') - 1),
-        STUFF(languages, 1, CHARINDEX(',', languages + ','), '')
-    FROM tmp
-    WHERE
-        languages > ''
-)
-
-SELECT languages_idv, COUNT(AppID)
-FROM tmp
-GROUP BY languages_idv
-ORDER BY COUNT(AppID) DESC
-
--- Top 50 Games Based On Peak CCU (Concurrent Users)
-
-SELECT TOP 50 Name, owners, ccu
-FROM steam_data
-ORDER BY ccu DESC
-
--- Top 50 Games Released on Steam in the 2020s Based On Peak CCU (Concurrent Users)
-
-SELECT TOP 50 Name, Release_date, owners, ccu
-FROM steam_data
-WHERE Release_date >= '2020-01-01'
-ORDER BY ccu DESC
-
--- Top 50 Games Based on Total Owners & Peak CCU (Concurrent Users)
-
-SELECT TOP 50
-	Name,
-	Release_date,
-	type,
-	CAST(REPLACE(PARSENAME(REPLACE(owners,' .. ','.'),2),',','') AS int) AS owners_min, 
-	CAST(REPLACE(PARSENAME(REPLACE(owners,' .. ','.'),1),',','') AS int) AS owners_max,
-	ccu,
-	CAST(price AS float)/100 AS price_USD
-FROM steam_data
-WHERE Release_date IS NOT NULL
-ORDER BY owners_max DESC, ccu DESC
-
--- Top 50 Action Games Based on Total Owners & Peak CCU (Concurrent Users)
-
-SELECT TOP 50
-	Name,
-	Release_date,
-	Genres,
-	CAST(REPLACE(PARSENAME(REPLACE(owners,' .. ','.'),2),',','') AS int) AS owners_min, 
-	CAST(REPLACE(PARSENAME(REPLACE(owners,' .. ','.'),1),',','') AS int) AS owners_max,
-	ccu,
-	CAST(price AS float)/100 AS price_USD
-FROM steam_data
-WHERE 
-	(Release_date IS NOT NULL) AND
-	(Genres like '%action%')
-ORDER BY owners_max DESC, ccu DESC
-
--- Top 10 Multiplayer Racing Games Based on Total Owners & Peak CCU (Concurrent Users)
-
-SELECT Top 10
-	Name,
-	Release_date,
-	Genres,
-	Categories,
-	CAST(REPLACE(PARSENAME(REPLACE(owners,' .. ','.'),2),',','') AS int) AS owners_min, 
-	CAST(REPLACE(PARSENAME(REPLACE(owners,' .. ','.'),1),',','') AS int) AS owners_max,
-	ccu,
-	CAST(price AS float)/100 AS price_USD
-FROM steam_data
-WHERE 
-	(Release_date IS NOT NULL) AND
-	(Categories like '%Multi-player%') AND
-	(Genres like '%Racing%')
-ORDER BY owners_max DESC, ccu DESC
-
--- Average Price of Each Genre
-
-WITH tmp(AppID, price, Genre_idv, Genres) AS
-(
-    SELECT
-        AppID,
-        price,
-        LEFT(Genres, CHARINDEX(',', Genres + ',') - 1),
-        STUFF(Genres, 1, CHARINDEX(',', Genres + ','), '')
-    FROM steam_data
-	WHERE Genres IS NOT NULL
-    UNION all
-
-    SELECT
-        AppID,
-        price,
-        LEFT(Genres, CHARINDEX(',', Genres + ',') - 1),
-        STUFF(Genres, 1, CHARINDEX(',', Genres + ','), '')
-    FROM tmp
-    WHERE
-        Genres > ''
-)
-
-SELECT Genre_idv, CAST(AVG(price) AS float)/100 AS price_USD
-FROM tmp
-WHERE price IS NOT NULL
-GROUP BY Genre_idv
-ORDER BY price_USD DESC
-
--- Average Number of Owners of Each Genre
-
-WITH tmp(AppID, owners, Genre_idv, Genres) AS
-(
-    SELECT
-        AppID,
-        owners,
-        LEFT(Genres, CHARINDEX(',', Genres + ',') - 1),
-        STUFF(Genres, 1, CHARINDEX(',', Genres + ','), '')
-    FROM steam_data
-	WHERE (Genres IS NOT NULL) AND (owners IS NOT NULL)
-    UNION all
-
-    SELECT
-        AppID,
-        owners,
-        LEFT(Genres, CHARINDEX(',', Genres + ',') - 1),
-        STUFF(Genres, 1, CHARINDEX(',', Genres + ','), '')
-    FROM tmp
-    WHERE
-        Genres > ''
-)
-SELECT 
-	Genre_idv,
-	AVG(CAST(REPLACE(PARSENAME(REPLACE(owners,' .. ','.'),1),',','') AS bigint)) AS owners_avg
-FROM tmp
-GROUP BY Genre_idv
-HAVING COUNT(AppID)>100
-ORDER BY owners_avg DESC
-
--- Top 100 Most Positively Reviewed Games
-
-SELECT TOP 100 Name, positive, negative, ROUND(CAST(positive AS float)/CAST(negative AS float),2) AS ratio
-FROM steam_data
-WHERE (positive IS NOT NULL) AND (negative != 0)
-ORDER BY ratio DESC
-
--- Most Negatively Reviewed Games (Games with More Negative Reviews Than Positive)
-
-SELECT TOP 100 Name, positive, negative, ROUND(CAST(positive AS float)/CAST(negative AS float),2) AS ratio
-FROM steam_data
-WHERE (positive IS NOT NULL) AND (negative != 0) AND (negative>positive)
-ORDER BY ratio ASC
-
--- Counter-Strike Games
-
-SELECT 
-	Name, 
-	Release_date,
-	owners, 
-	ccu, 
-	CAST(price AS float)/100 AS price_USD, 
-	positive,
-	negative,
-	ROUND(CAST(positive AS float)/CAST(negative AS float),2) AS ratio
-FROM steam_data
-WHERE (Name like '%Counter-Strike%') AND (ccu IS NOT NULL)
-ORDER BY Release_date
-									</code></pre>
+									<br>
+									Data Consolidation query:
+									<ul class="alt">
+										<li><a href="https://github.com/andrew-liawan/Portfolio/blob/main/Steam%20SQL/Consolidation%20SQL.sql">View SQL file</a> </li>
+										<li><a href="https://andrew-liawan.github.io/Portfolio/Steam%20SQL/Consolidation%20SQL.sql">Download SQL file</a></li>
+									</ul>
+									<br>
+									Data Exploration query:
+									<ul class="alt">
+										<li><a href="https://github.com/andrew-liawan/Portfolio/blob/main/Steam%20SQL/Data%20Exploration.sql">View SQL file</a> </li>
+										<li><a href="https://andrew-liawan.github.io/Portfolio/Steam%20SQL/Data%20Exploration.sql">Download SQL file</a></li>
+									</ul>
 								</p>
 							</div>
 						</section>
